@@ -121,6 +121,29 @@ On Adminer's login screen:
   (or `:memory:` for a throwaway in-memory database)
 - **Username / Password**: ignored
 
+## Login form
+
+`duckdb-login.php` is a small companion plugin (drop it in `adminer-plugins/`
+next to the driver). It's optional but recommended — the driver works without
+it, but the login screen is rougher. It does two things:
+
+- **Adapts the login form for DuckDB.** DuckDB is file-based like SQLite, so the
+  "Server" field is really a database-file path and username/password are
+  ignored. Adminer only hides/relabels those fields for the built-in `sqlite`
+  driver (hard-coded in its compiled JavaScript, which no PHP hook can change),
+  so this plugin injects a small script that, when **DuckDB** is selected,
+  relabels *Server* to *Database file*, adds a helpful placeholder, and disables
+  the unused Username/Password inputs.
+
+- **Permits the passwordless login.** DuckDB ignores the password, so you log in
+  with a blank one. Adminer otherwise refuses that with *"Adminer does not
+  support accessing a database without a password."* The plugin's `login()` hook
+  returns `true` for the `duckdb` driver to allow it — and only for that driver,
+  so other drivers keep Adminer's normal password requirement.
+
+Without this file you can still connect, but you'll have to ignore the mislabeled
+Server field and Adminer will block the empty-password login.
+
 ## Read-only mode
 
 By default this driver opens **file-based** DuckDB databases in **read-only**
