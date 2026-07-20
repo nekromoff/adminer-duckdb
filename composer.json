@@ -1,0 +1,24 @@
+{
+	"name": "nekromoff/adminer-duckdb",
+	"description": "DuckDB driver/plugin for Adminer 5.x",
+	"type": "library",
+	"license": "Apache-2.0",
+	"require": {
+		"php": ">=8.3",
+		"ext-ffi": "*",
+		"satur.io/duckdb-auto": "^2.1"
+	},
+	"suggest": {
+		"vrana/adminer": "Adminer 5.x, the database management tool this driver plugs into"
+	},
+	"config": {
+		"allow-plugins": {
+			"satur.io/duckdb-auto": true
+		}
+	},
+	"autoload": {
+		"files": [
+			"duckdb-driver.php"
+		]
+	}
+}
