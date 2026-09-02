@@ -293,6 +293,11 @@ if (isset($_GET["duckdb"])) {
 			public $functions = array("length", "lower", "upper", "round", "abs", "trim", "md5", "hex");
 			public $grouping = array("avg", "count", "count distinct", "max", "min", "sum", "stddev", "median");
 
+			// Adminer 6.0.2 replaced the property by a method
+			function operators(?array $tableStatus): array {
+				return $this->operators;
+			}
+
 			function structuredTypes(): array {
 				return array_keys($this->types[0]);
 			}
