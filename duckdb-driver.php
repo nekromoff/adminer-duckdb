@@ -209,7 +209,7 @@ if (isset($_GET["duckdb"])) {
 
 			private static function duckdbVersion($link): string {
 				try {
-					foreach ($link->query("SELECT version() AS v")->rows(true) as $row) {
+					foreach (self::execute($link, "SELECT version() AS v")->rows(true) as $row) {
 						return ltrim((string) ($row["v"] ?? ""), "v");
 					}
 				} catch (\Throwable $e) {
@@ -250,7 +250,7 @@ if (isset($_GET["duckdb"])) {
 				$this->error = "";
 				$this->errno = 0;
 				try {
-					$resultSet = $this->link->query($query);
+					$resultSet = self::execute($this->link, $query);
 				} catch (\Throwable $e) {
 					$this->error = $e->getMessage();
 					$this->errno = $e->getCode();
@@ -263,6 +263,17 @@ if (isset($_GET["duckdb"])) {
 				// surface an affected-row count for such statements, so report 0.
 				$this->affected_rows = 0;
 				return true;
+			}
+
+			/** Send a query, through the executeQuery() hook in Adminer 6.3+ so that plugins can log it
+			* @param \Saturio\DuckDB\DuckDB $link
+			* @return \Saturio\DuckDB\Result\ResultSet
+			*/
+			private static function execute($link, string $query) {
+				$send = function () use ($link, $query) {
+					return $link->query($query);
+				};
+				return (method_exists('Adminer\Adminer', 'executeQuery') ? adminer()->executeQuery($query, $send) : $send());
 			}
 		}
 
